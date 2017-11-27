@@ -128,6 +128,12 @@ namespace Wilkin.Com.Executor
         {
             try
             {
+                DateTime startTime = DateTime.Now;
+                ReportState(new ReportStateDTO() { StateDescription = string.Format("开始@{0}...", startTime.ToString("yyyy:MM:dd HH:mm:ss")) });
+                Log(new LogDTO()
+                {
+                    Text = string.Format("开始@{0}...", DateTime.Now.ToString("yyyy:MM:dd HH:mm:ss"))
+                });
                 if (_executePrepareDelegate != null)
                 {
                     _executePrepareDelegate();
@@ -137,6 +143,12 @@ namespace Wilkin.Com.Executor
                 {
                     _executeOverDelegate();
                 }
+                DateTime endTime = DateTime.Now;
+                ReportState(new ReportStateDTO() { StateDescription = string.Format("结束@{0}...", endTime.ToString("yyyy:MM:dd HH:mm:ss")) });
+                Log(new LogDTO()
+                {
+                    Text = string.Format("结束@{0}...", DateTime.Now.ToString("yyyy:MM:dd HH:mm:ss"))
+                });
             }
             catch (Exception ex)
             {

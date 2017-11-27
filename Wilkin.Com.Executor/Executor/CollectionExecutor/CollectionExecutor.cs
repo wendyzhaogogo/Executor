@@ -12,21 +12,20 @@ namespace Wilkin.Com.Executor.CollectionExecutor
     {
         protected override sealed void DoWork(DoWorkDTO dto)
         {
-            ReportState(new ReportStateDTO() { StateDescription="开始..."});
-            var list = GetUnitList(dto).ToList();            
+            var list = GetUnitList(dto).ToList();
             int index = 0;
             int count = list.Count();
             int count_success = 0;
             int count_failure = 0;
             int count_error = 0;
             ReportState(new ReportStateDTO() { StateDescription = string.Format("共读取到{0}个待处理项,开始处理...", count) });
-            foreach (ExecuteUnitDTOBase current in list)
+            foreach (T current in list)
             {
                 index++;
                 UnitHandleResultEnum unitHandleType = UnitHandleResultEnum.Success;
                 try
                 {
-                    CommonReturnType result = UnitHandle(current as T, dto);
+                    CommonReturnType result = UnitHandle(current, dto);
 
                     if (!result.IsSuccess)
                     {
@@ -55,8 +54,13 @@ namespace Wilkin.Com.Executor.CollectionExecutor
 
                 ReportState(new ReportStateDTO() { StateDescription = string.Format("第{0}/{1}个${2}${3}__当前共成功{4}个，失败{5}个，异常{6}个", index, count, current.Key, GetUnitHanleResultStr(unitHandleType), count_success, count_failure, count_error) });
             }
+            
+            Log(new LogDTO()
+            {
+                Text = string.Format("共成功{0}个，失败{1}个，异常{2}个", count_success, count_failure, count_error)
+            });
 
-            ReportState(new ReportStateDTO() { StateDescription = string.Format("结束...", count) });
+            
         }
 
         private string GetUnitHanleResultStr(UnitHandleResultEnum e)
